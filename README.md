@@ -2,10 +2,15 @@
 
 Basic OUYA compatible store server
 
-## Useage
+## Prerequisities
+1. Python 3
+2. pipenv
+
+## Usage
 1. Clone this repo
 2. open a terminal in the repo's directory
-3. Run `python3 BrewyaStore.py`
+3. tun `pipenv install`
+4. Run `pipenv run python3 BrewyaStore.py`
 note: depending on your system, `python3` may be replaced with `python`
 
 ## point your OUYA to new store
