@@ -5,8 +5,7 @@ name = "pypi"
 
 [packages]
 flask = "*"
-
-[dev-packages]
+python-magic = "*"
 
 [requires]
 python_version == "3.*"
