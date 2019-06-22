@@ -1,13 +1,12 @@
-from flask import Flask, request, send_from_directory, Response
+import flask
 import magic
 
-app = Flask(__name__)
+app = flask.Flask(__name__)
 
-self_url = 'http://10.42.42.233:5000'
 static_data = {}
 
 def replace_vars(data):
-    data = data.replace("{this_server_url}", self_url)
+    data = data.replace("{this_server_url}", flask.request.url_root.rstrip("/"))
     return data
 
 @app.route("/")
@@ -33,7 +32,7 @@ def ratings():
 @app.route("/api/v1/details")
 def details():
     tmp = None
-    with open("app/data/games/{}/detail.json".format(request.args.get('app'))) as f:
+    with open("app/data/games/{}/detail.json".format(flask.request.args.get('app'))) as f:
         tmp = "\n".join(f.readlines())
     return tmp
 
@@ -47,8 +46,9 @@ def apps_download(uuid):
 @app.route("/api/v1/apps/<uuid>/<resource>")
 def apps_resource(uuid, resource):
     filename = "app/data/games/{}/static/{}".format(uuid, resource)
+    mime = magic.from_file(filename, mime=True)
     with open(filename,'rb') as f:
-        return Response(b"".join(f.readlines()), magic.from_file(filename, mime=True))
+        return flask.Response(b"".join(f.readlines()), mimetype=mime)
 
 @app.route("/api/v1/sessions", methods=['POST'])
 def sessions():
@@ -116,11 +116,10 @@ def discover_home():
 
 @app.route("/api/v1/discover")
 def discover():
-    return static_data['discover']
+    return replace_vars(static_data['discover'])
 
 
 if __name__ == "__main__":
     with open("app/data/discover.json","r") as f:
         static_data['discover'] = "\n".join(f.readlines())
-        static_data['discover'] = replace_vars(static_data['discover'])
     app.run(host='0.0.0.0')
